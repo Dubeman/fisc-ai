@@ -40,7 +40,7 @@ const App = () => {
     return { paymentInitiation, isUserTokenFlow };
   }, [dispatch]);
 
-  const generateUserToken = useCallback(async () => {
+  const generateUserToken = useCallback(async () => { // these are to the local server on Port 8000 not the Plaid API. Only the LinkWidget is connected to the Plaid API
     const response = await fetch("api/create_user_token", { method: "POST" });
     if (!response.ok) {
       dispatch({ type: "SET_STATE", state: { userToken: null } });
@@ -124,14 +124,29 @@ const App = () => {
       <div className={styles.container}>
         <Header />
         {linkSuccess && (
-          <>
+            <>
             <Products />
-            {!isPaymentInitiation && itemId && <Items />}
-          </>
+            {!isPaymentInitiation && itemId && (
+              <>
+              <Items />
+              {/* Add a button for the simpleTransactionCall function */}
+              <button onClick={simpleTransactionCall}>Get Transactions</button>
+              </>
+            )}
+            </>
         )}
       </div>
     </div>
   );
 };
+
+const simpleTransactionCall = async () => {
+  // call the local server to get the transactions
+  const response = await fetch("/api/transactions", { method: "GET" });
+  const data = await response.json();
+  console.log(`here is the data ${JSON.stringify(data)}`);
+
+};
+
 
 export default App;
