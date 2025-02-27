@@ -1,0 +1,40 @@
+version: 1
+applications:
+  - appRoot: frontend
+    backend:
+      phases:
+        build:
+          commands:
+            - '# Execute Amplify CLI with the helper script'
+            - amplifyPush --simple
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm install
+        build:
+          commands:
+            - npm run build
+      artifacts:
+        baseDirectory: build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+  - appRoot: python
+    backend:
+      phases:
+        preBuild:
+          commands:
+            - pip install -r requirements.txt
+        build:
+          commands:
+            - python server.py
+      artifacts:
+        baseDirectory: .
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - .venv/**/*
